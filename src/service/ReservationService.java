@@ -7,7 +7,8 @@ import model.Reservation;
 import java.util.*;
 
 public class ReservationService {
-    static Map<String, IRoom> mapOfRoom = new HashMap<String, IRoom>();
+    private ReservationService() {}
+    private static Map<String, IRoom> mapOfRoom = new HashMap<String, IRoom>();
     public static void addRoom(IRoom room) {
         //create a map abject to store IRoom class by using roomId as key
         mapOfRoom.put(room.getRoomNumber(),room);
@@ -17,31 +18,31 @@ public class ReservationService {
         return mapOfRoom.get(roomId);
     }
 
-    static Map<Customer, Collection<Reservation>> mapOfReservation = new HashMap<Customer, Collection<Reservation>>();
+    private static Map<Customer, Collection<Reservation>> mapOfReservation = new HashMap<Customer, Collection<Reservation>>();
     public static Reservation reserveARoom(Customer customer, IRoom room, Date checkInDate, Date checkOutDate) {
-//        if(isRoomReserved(room,checkInDate,checkOutDate)) {
-//            Collection<IRoom> emptyRoom = findRooms(checkInDate,checkOutDate);
-//            if(emptyRoom .isEmpty()) {
-//                //
-//            } else {
-//                System.out.println("Here are some other available rooms:");
-//                for (IRoom iRoom : emptyRoom
-//                     ) {
-//                    System.out.println(iRoom);
-//                }
-//            }
-//        }
-        Reservation reservation = new Reservation(customer,room,checkInDate, checkOutDate);
+        if (isRoomReserved(room, checkInDate, checkOutDate)) {
+            Collection<IRoom> emptyRoom = findRooms(checkInDate, checkOutDate);
+            if (!emptyRoom.isEmpty()) {
+                System.out.println("Sorry, the room you entered is not available!");
+                System.out.println("Here are some other available rooms:");
+                for (IRoom iRoom : emptyRoom
+                ) {
+                    System.out.println(iRoom);
+                }
+            }
+            return null;
+        }
+        Reservation reservation = new Reservation(customer, room, checkInDate, checkOutDate);
         Collection<Reservation> reservations = getCustomerReservation(customer);
-        if(!Optional.ofNullable(getCustomerReservation(customer)).isPresent()) {
+        if (!Optional.ofNullable(getCustomerReservation(customer)).isPresent()) {
             reservations = new ArrayList<>();
         }
         reservations.add(reservation);
-        mapOfReservation.put(customer,reservations);
+        mapOfReservation.put(customer, reservations);
         return reservation;
     }
 
-    public static Collection<IRoom> findRooms(Date checkInDate, Date checkOutDate) {
+        public static Collection<IRoom> findRooms(Date checkInDate, Date checkOutDate) {
         List<IRoom> roomReserved = roomReserved(checkInDate, checkOutDate);
         Collection<IRoom> emptyRoom = new ArrayList<>();
         for ( IRoom room: mapOfRoom.values()) {
@@ -70,7 +71,7 @@ public class ReservationService {
         return mapOfRoom.values();
     }
 
-    public static boolean isRoomReserved(IRoom room, Date checkInDate, Date checkOutDate) {
+    private static boolean isRoomReserved(IRoom room, Date checkInDate, Date checkOutDate) {
         List<IRoom> roomReserved = roomReserved(checkInDate, checkOutDate);
         if(roomReserved.contains(room)) {
             return true;
@@ -79,7 +80,7 @@ public class ReservationService {
         }
     }
 
-    public static List<IRoom> roomReserved(Date checkInDate, Date checkOutDate) {
+    static List<IRoom> roomReserved(Date checkInDate, Date checkOutDate) {
         List<IRoom> roomReserved = new ArrayList<>();
         for(Collection<Reservation> reservations : mapOfReservation.values()) {
             for(Reservation reservation :reservations) {

@@ -6,12 +6,10 @@ import model.Reservation;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 
 public class MainMenu {
+    private MainMenu() {}
     public static void mainMenu(){
         while(true) {
             System.out.println("\n------------------------------");
@@ -30,7 +28,6 @@ public class MainMenu {
             Scanner scanner = new Scanner(System.in);
             int number = scanner.nextInt();
             switch(number) {
-                //稍后测试
                 case 1:
                     findAndReserveRoom();
                     break;
@@ -125,7 +122,19 @@ public class MainMenu {
         Collection<IRoom> emptyRooms = HotelResource.findARoom(checkInDate,checkOutDate);
         if(emptyRooms.isEmpty()) {
             System.out.println("Sorry, there is no room left on the dates you entered.");
-//            System.out.println("Would you like to input how many days out the room recommendation");
+            Date newCheckInDate = addDate(checkInDate);
+            Date newCheckOutDate = addDate(checkOutDate);
+            Collection<IRoom> newEmptyRooms = HotelResource.findARoom(newCheckInDate,newCheckOutDate);
+            if(!newEmptyRooms.isEmpty()) {
+                String pattern = "EEE MMM dd yyyy";
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+                String checkIn = simpleDateFormat.format(newCheckInDate);
+                String checkOut = simpleDateFormat.format(newCheckOutDate);
+                System.out.println("But there are some rooms available on "+checkIn+" to "+checkOut+" :");
+                HotelResource.printRoom(newEmptyRooms);
+            } else {
+                System.out.println("Our hotels are fully booked on that dates");
+            }
         } else {
             HotelResource.printRoom(emptyRooms);
             Scanner sc = new Scanner(System.in);
@@ -148,7 +157,9 @@ public class MainMenu {
                                     String roomNumber = sc.next();
                                     IRoom room = HotelResource.getRoom(roomNumber);
                                     Reservation reservation = HotelResource.bookARoom(email, room, checkInDate, checkOutDate);
-                                    System.out.println(reservation);
+                                    if(reservation != null) {
+                                        System.out.println(reservation);
+                                    }
                                     keepRunning = false;
                                     break;
                                 } catch (Exception e) {
@@ -184,5 +195,12 @@ public class MainMenu {
         } catch(Exception e) {
             System.out.println("You don't have a reservation");
        }
+    }
+
+    public static Date addDate(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE,7);
+        return cal.getTime();
     }
 }

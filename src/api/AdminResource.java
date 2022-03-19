@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class AdminResource {
+    private AdminResource() {}
     public static Customer getCustomer(String email) {
         return CustomerService.getCustomer(email);
     }

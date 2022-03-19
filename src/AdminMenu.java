@@ -3,12 +3,10 @@ import api.HotelResource;
 import model.*;
 
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class AdminMenu {
+    private AdminMenu() {}
     public static void adminMenu(){
         while(true) {
             System.out.println("\n------------------------------");
@@ -19,7 +17,8 @@ public class AdminMenu {
             System.out.println("2.See all Rooms");
             System.out.println("3.See all Reservations");
             System.out.println("4.Add a Room");
-            System.out.println("5.Back to Main Menu");
+            System.out.println("5.Add Test Data");
+            System.out.println("6.Back to Main Menu");
             System.out.println("------------------------------");
             System.out.println("Please select a number for the menu option.");
 
@@ -40,6 +39,9 @@ public class AdminMenu {
                     addARoom();
                     break;
                 case 5:
+                    addTestData();
+                    break;
+                case 6:
                     MainMenu.mainMenu();
                     break;
                 default:
@@ -102,5 +104,29 @@ public class AdminMenu {
                 }
             }
         }
+    }
+
+    public static void addTestData() {
+        //create test accounts
+        HotelResource.createACustomer("tang@gmail.com","tang","zi");
+        HotelResource.createACustomer("w@gmail.com","w","zi");
+        //create test rooms
+        List<IRoom> rooms = new ArrayList<IRoom>();
+        rooms.add(new Room("1",80.0 ,RoomType.DOUBLE));
+        rooms.add(new Room("2",80.0 ,RoomType.DOUBLE));
+        rooms.add(new Room("3",80.0 ,RoomType.SINGLE));
+        rooms.add(new Room("4",100.0 ,RoomType.SINGLE));
+        AdminResource.addRoom(rooms);
+
+        //create reservations
+        Date today = new Date();
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE,2);
+        Date checkOutDate1 = c.getTime();
+        HotelResource.bookARoom("tang@gmail.com",HotelResource.getRoom("1"),today,checkOutDate1);
+        c.add(Calendar.DATE,5);
+        Date checkOutDate2 = c.getTime();
+        HotelResource.bookARoom("w@gmail.com",HotelResource.getRoom("2"),today,checkOutDate2);
+        System.out.println("Test data is added.");
     }
 }

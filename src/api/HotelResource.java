@@ -3,7 +3,6 @@ package api;
 import model.Customer;
 import model.IRoom;
 import model.Reservation;
-import model.Room;
 import service.CustomerService;
 import service.ReservationService;
 
@@ -11,6 +10,7 @@ import java.util.Collection;
 import java.util.Date;
 
 public class HotelResource {
+    private HotelResource() {}
     public static Customer getCustomer(String email) {
         return CustomerService.getCustomer(email);
     }
@@ -25,7 +25,7 @@ public class HotelResource {
 
     public static Reservation bookARoom(String customerEmail, IRoom room, Date checkInDate, Date checkOutDate) {
         Customer customer = CustomerService.getCustomer(customerEmail);
-        return ReservationService.reserveARoom(customer,room, checkInDate,checkOutDate);
+        return ReservationService.reserveARoom(customer,room,checkInDate,checkOutDate);
     }
 
     public static Collection<Reservation> getCustomerReservations(String customerEmail) {
